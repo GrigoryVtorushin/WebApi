@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Chat</title>
+</head>
+
+<body>
+
+    <div>
+        <div class="flex flex-col items-center" style="width: 400px; margin: auto; border: 1px solid black; padding: 20px">
+        <h1>Чат</h1>
+        <div style="margin-right: auto; width:400px">
+            <h2>Ваш ID: <span id="ws-id"></span></h2>
+		<form action="" onsubmit="sendMessage(event)">
+			<input class="bg-green-300" type="text" id="messageText" autocomplete="off" />
+			<button>Отправить</button>
+		</form>
+		<ul id='messages'> </ul>
+        </div>
+
+	</div>
+
+    </div>
+
+	<script>
+	let user_id = Math.floor(Math.random() * 1000) + 1
+	document.querySelector("#ws-id").textContent = user_id;
+	let ws = new WebSocket(`{{ ws_protocol }}://{{ server_urn }}/ws/${user_id}`);
+
+	ws.onmessage = function(event) {
+		appendMessage(event.data)
+	};
+
+	function sendMessage(event) {
+		let input = document.getElementById("messageText")
+		ws.send(input.value)
+		input.value = ''
+		event.preventDefault()
+	}
+
+    function appendMessage(msg) {
+		let messages = document.getElementById('messages')
+		let message = document.createElement('li')
+		let content = document.createTextNode(msg)
+		message.appendChild(content)
+		messages.appendChild(message)
+	}
+
+
+	</script>
+</body>
+
+</html>
